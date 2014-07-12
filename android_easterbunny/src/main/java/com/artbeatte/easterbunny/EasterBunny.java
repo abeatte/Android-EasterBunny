@@ -93,7 +93,7 @@ public class EasterBunny {
     }
 
     private void removeOverlay() {
-        if (mOverlay.getParent() instanceof ViewGroup) ((ViewGroup)mOverlay.getParent()).removeView(mOverlay);
+        mActivity.getWindowManager().removeViewImmediate(mOverlay);
     }
 
     /**
@@ -156,7 +156,7 @@ public class EasterBunny {
      * @return true if displayed
      */
     public boolean isControllerVisible() {
-        return mOverlay.findViewById(R.id.easterbunny_controller) != null;
+        return mOverlay.findViewById(R.id.easterbunny_controller).getVisibility() == View.VISIBLE;
     }
 
     private void hideController() {
@@ -176,6 +176,8 @@ public class EasterBunny {
 
     public void unlockFailed() {
         mCombinationStep = 0;
+        if (isButtonGesture(mCombination.get(mCombinationStep))) showController(false);
+        else hideController();
         if (mUnlockListener != null) mUnlockListener.unlockFailed();
     }
 
@@ -203,6 +205,8 @@ public class EasterBunny {
                     case DOWN:
                         unlockGesture = UnlockGesture.SWIPE_DOWN;
                         break;
+                    case INCONSISTENT:
+                        unlockFailed();
                 }
 
                 processGesture(unlockGesture);

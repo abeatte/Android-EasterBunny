@@ -80,6 +80,8 @@ public abstract class OnSwipeListener implements View.OnTouchListener {
                     onSwipe(Direction.UP);
                 } else if (down && !right && !left && mDirection == Direction.DOWN) {
                     onSwipe(Direction.DOWN);
+                } else {
+                    onSwipe(Direction.INCONSISTENT);
                 }
                 mPrevious = null;
 
