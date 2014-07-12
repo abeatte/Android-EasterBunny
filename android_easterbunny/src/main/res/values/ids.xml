@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="easterbunny_overlay" type="id">easterbunny_overlay</item>
+    <item name="easterbunny_controller" type="id">easterbunny_controller</item>
+</resources>

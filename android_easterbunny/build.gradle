@@ -1,11 +1,11 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "easterbunnydemo.artbeatte.com.myapplication"
+        applicationId "com.artbeatte.easterbunny"
         minSdkVersion 15
         targetSdkVersion 15
         versionCode 1

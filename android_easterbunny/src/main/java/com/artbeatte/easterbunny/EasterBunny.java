@@ -1,8 +1,14 @@
 package com.artbeatte.easterbunny;
 
 import android.app.Activity;
+import android.graphics.PixelFormat;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +16,7 @@ import java.util.List;
 /**
  * Created by art.beatte on 7/10/14.
  */
-public class EasterBunny implements View.OnTouchListener {
+public class EasterBunny {
 
     /**
      * Listener used to signal when unlock sequences have been performed correctly or not.
@@ -30,6 +36,18 @@ public class EasterBunny implements View.OnTouchListener {
     /**
      * Creator of an {@link com.artbeatte.easterbunny.EasterBunny}.
      * @param activity The {@link android.app.Activity} to listen for {@link com.artbeatte.easterbunny.UnlockGesture}s
+     * @param unlockListener The {@link com.artbeatte.easterbunny.EasterBunny.UnlockListener} to receive callbacks.
+     * @return a new {@link com.artbeatte.easterbunny.EasterBunny} instance
+     */
+    public static EasterBunny Create(Activity activity, UnlockListener unlockListener) {
+        EasterBunny eb =  new EasterBunny(activity);
+        eb.setUnlockListener(unlockListener);
+        return eb;
+    }
+
+    /**
+     * Creator of an {@link com.artbeatte.easterbunny.EasterBunny}.
+     * @param activity The {@link android.app.Activity} to listen for {@link com.artbeatte.easterbunny.UnlockGesture}s
      * @return a new {@link com.artbeatte.easterbunny.EasterBunny} instance
      */
     public static EasterBunny Create(Activity activity) {
@@ -39,26 +57,30 @@ public class EasterBunny implements View.OnTouchListener {
     Activity mActivity;
     private UnlockListener mUnlockListener;
     private List<UnlockGesture> mCombination;
+    private int mCombinationStep;
     MotionEvent mPreviousTouch;
+    private FrameLayout mOverlay;
 
     private EasterBunny(Activity activity) {
         mActivity = activity;
         mCombination = new ArrayList<UnlockGesture>();
-        init();
+        mCombinationStep = -1;
     }
 
-    private void init() {
-        // TODO: create the FrameLayout for listening to swipes and displaying the "controller".
-//        inflate(mActivity, R.layout.easterbunny, this);
+    private void deployOverlay() {
+        Window w = mActivity.getWindow();
+        mOverlay = new FrameLayout(mActivity);
+        mOverlay.setId(R.id.easterbunny_overlay);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_APPLICATION,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSPARENT);
+        w.addContentView(mOverlay, params);
+    }
 
-
-        // handles everything below the AB
-//        Window w = mActivity.getWindow();
-//        w.addContentView(this, new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT,
-//                WindowManager.LayoutParams.TYPE_APPLICATION,
-//                0,
-//                PixelFormat.OPAQUE));
+    private void removeOverlay() {
+        ((ViewGroup)mOverlay.getParent()).removeView(mOverlay);
     }
 
     /**
@@ -121,16 +143,43 @@ public class EasterBunny implements View.OnTouchListener {
      * @return true if displayed
      */
     public boolean isControllerVisible() {
-
-        return false;
+        return mOverlay.findViewById(R.id.easterbunny_controller) != null;
     }
 
     private void hideController() {
-
+        mOverlay.removeView(mOverlay.findViewById(R.id.easterbunny_controller));
     }
 
-    private void showController() {
+    private void showController(boolean withDPad) {
+        View controller = mActivity.getLayoutInflater().inflate(R.layout.easterbunny_controller, null);
+        controller.findViewById(R.id.controller_b).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processGesture(UnlockGesture.BUTTON_B);
+            }
+        });
+        controller.findViewById(R.id.controller_a).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processGesture(UnlockGesture.BUTTON_A);
+            }
+        });
+        controller.setId(R.id.easterbunny_controller);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION);
+        params.gravity = Gravity.CENTER;
+        mOverlay.addView(controller, params);
+    }
 
+    private void unlock() {
+        mCombinationStep = -1;
+        mOverlay.setOnTouchListener(null);
+        if (mUnlockListener != null) mUnlockListener.unlock();
+        removeOverlay();
+    }
+
+    public void unlockFailed() {
+        mCombinationStep = 0;
+        if (mUnlockListener != null) mUnlockListener.unlockFailed();
     }
 
     /**
@@ -138,28 +187,56 @@ public class EasterBunny implements View.OnTouchListener {
      * @return the {@link com.artbeatte.easterbunny.EasterBunny} instance.
      */
     public EasterBunny lock() {
-        // TODO: register listeners to signal when unlocked or needing controller.
+        deployOverlay();
+        mCombinationStep = 0;
+        mOverlay.setOnTouchListener(new OnSwipeListener(mOverlay) {
+            @Override
+            public void onSwipe(Direction direction) {
+                UnlockGesture unlockGesture = null;
+                switch (direction) {
+                    case LEFT:
+                        unlockGesture = UnlockGesture.SWIPE_LEFT;
+                        break;
+                    case RIGHT:
+                        unlockGesture = UnlockGesture.SWIPE_RIGHT;
+                        break;
+                    case UP:
+                        unlockGesture = UnlockGesture.SWIPE_UP;
+                        break;
+                    case DOWN:
+                        unlockGesture = UnlockGesture.SWIPE_DOWN;
+                        break;
+                }
+
+                processGesture(unlockGesture);
+            }
+        });
+        if (isButtonGesture(mCombination.get(mCombinationStep))) showController(false);
         return this;
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                mPreviousTouch = event;
-                break;
+    private void processGesture(UnlockGesture unlockGesture) {
+        if (unlockGesture == null) return;
+
+        if (isButtonGesture(unlockGesture)) hideController();
+
+        if (mCombination.get(mCombinationStep) == unlockGesture) {
+            mCombinationStep ++;
+            if (mCombinationStep == mCombination.size()) {
+                unlock();
+                return;
             }
-            case MotionEvent.ACTION_UP: {
-                float currentX = event.getX();
-                if (mPreviousTouch.getX() < currentX) {
-                    // swiped left
-                }
-                if (mPreviousTouch.getX() > currentX ) {
-                    //swiped right
-                }
-                break;
+
+            UnlockGesture step = mCombination.get(mCombinationStep);
+            if (isButtonGesture(step)) {
+                showController(false);
             }
+        } else {
+            unlockFailed();
         }
-        return false;
+    }
+
+    private boolean isButtonGesture(UnlockGesture unlockGesture) {
+        return unlockGesture == UnlockGesture.BUTTON_A || unlockGesture == UnlockGesture.BUTTON_B;
     }
 }
