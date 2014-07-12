@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.artbeatte.easterbunny.EasterBunny;
 import com.artbeatte.easterbunny.UnlockGesture;
@@ -52,6 +53,8 @@ public class MainActivity extends Activity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        private EasterBunny mEasterBunny;
+
         public PlaceholderFragment() {
         }
 
@@ -59,25 +62,28 @@ public class MainActivity extends Activity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            rootView.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "Poop", Toast.LENGTH_LONG).show();
+                }
+            });
 
-            EasterBunny easterBunny = EasterBunny.Create(getActivity())
+             mEasterBunny = EasterBunny.Create(getActivity())
                     .clearCombination()
                     .addStep(UnlockGesture.SWIPE_UP)
                     .addStep(UnlockGesture.BUTTON_B)
                     .addStep(UnlockGesture.SWIPE_UP)
-                    .addStep(UnlockGesture.SWIPE_DOWN)
-                    .addStep(UnlockGesture.SWIPE_DOWN)
-                    .addStep(UnlockGesture.SWIPE_LEFT)
-                    .addStep(UnlockGesture.SWIPE_RIGHT)
-                    .addStep(UnlockGesture.SWIPE_LEFT)
-                    .addStep(UnlockGesture.SWIPE_RIGHT)
                     .addStep(UnlockGesture.BUTTON_B)
+                    .addStep(UnlockGesture.BUTTON_B)
+                    .addStep(UnlockGesture.SWIPE_RIGHT)
+                    .addStep(UnlockGesture.SWIPE_DOWN)
                     .addStep(UnlockGesture.BUTTON_A)
                     .lock();
 
 //            EasterBunny.Create(getActivity()).setPattern(UnlockPattern.KONAMI_CODE);
 
-            easterBunny.setUnlockListener(new EasterBunny.UnlockListener() {
+            mEasterBunny.setUnlockListener(new EasterBunny.UnlockListener() {
                 @Override
                 public void unlock() {
                     // TODO: start easteregg activity.
@@ -90,6 +96,12 @@ public class MainActivity extends Activity {
             });
 
             return rootView;
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            mEasterBunny.stop();
         }
     }
 }
