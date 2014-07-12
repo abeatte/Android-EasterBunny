@@ -31,38 +31,31 @@ public class EasterBunny {
         public void unlockFailed();
     }
 
-    /**
-     * Creator of an {@link com.artbeatte.easterbunny.EasterBunny}.
-     * @param activity The {@link android.app.Activity} to listen for {@link com.artbeatte.easterbunny.UnlockGesture}s
-     * @param unlockListener The {@link com.artbeatte.easterbunny.EasterBunny.UnlockListener} to receive callbacks.
-     * @return a new {@link com.artbeatte.easterbunny.EasterBunny} instance
-     */
-    public static EasterBunny Create(Activity activity, UnlockListener unlockListener) {
-        EasterBunny eb =  new EasterBunny(activity);
-        eb.setUnlockListener(unlockListener);
-        return eb;
-    }
-
-    /**
-     * Creator of an {@link com.artbeatte.easterbunny.EasterBunny}.
-     * @param activity The {@link android.app.Activity} to listen for {@link com.artbeatte.easterbunny.UnlockGesture}s
-     * @return a new {@link com.artbeatte.easterbunny.EasterBunny} instance
-     */
-    public static EasterBunny Create(Activity activity) {
-        return new EasterBunny(activity);
-    }
-
     Activity mActivity;
     private UnlockListener mUnlockListener;
     private List<UnlockGesture> mCombination;
     private int mCombinationStep;
     private View mDecorView;
 
-    private EasterBunny(Activity activity) {
+    /**
+     * Creates a {@link com.artbeatte.easterbunny.EasterBunny}.
+     * @param activity The {@link android.app.Activity} to listen for {@link com.artbeatte.easterbunny.UnlockGesture}s
+     */
+    public EasterBunny(Activity activity) {
         mActivity = activity;
         mCombination = new ArrayList<UnlockGesture>();
         mCombinationStep = -1;
         mDecorView = mActivity.getWindow().getDecorView();
+    }
+
+    /**
+     * Creates a {@link com.artbeatte.easterbunny.EasterBunny}.
+     * @param activity The {@link android.app.Activity} to listen for {@link com.artbeatte.easterbunny.UnlockGesture}s
+     * @param unlockListener The {@link com.artbeatte.easterbunny.EasterBunny.UnlockListener} to receive callbacks.
+     */
+    public EasterBunny(Activity activity, UnlockListener unlockListener) {
+        this(activity);
+        setUnlockListener(unlockListener);
     }
 
     private void addController(boolean withDPad) {
