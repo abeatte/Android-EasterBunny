@@ -65,11 +65,18 @@ public class MainActivity extends Activity {
             rootView.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Poop", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), android.R.string.ok, Toast.LENGTH_LONG).show();
                 }
             });
 
-             mEasterBunny = EasterBunny.Create(getActivity())
+            return rootView;
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+
+            mEasterBunny = new EasterBunny(getActivity())
                     .clearCombination()
                     .addStep(UnlockGesture.SWIPE_UP)
                     .addStep(UnlockGesture.BUTTON_B)
@@ -86,16 +93,14 @@ public class MainActivity extends Activity {
             mEasterBunny.setUnlockListener(new EasterBunny.UnlockListener() {
                 @Override
                 public void unlock() {
-                    // TODO: start easteregg activity.
+                    Toast.makeText(getActivity(), "EasterEgg Unlocked!!!", Toast.LENGTH_LONG).show();
                 }
 
                 @Override
                 public void unlockFailed() {
-                    // TODO: keep count and hint every 5
+                    // TODO: keep count and provide hint every 5 fails.
                 }
             });
-
-            return rootView;
         }
 
         @Override
