@@ -1,6 +1,9 @@
 package com.artbeatte.easterbunny;
 
+import android.graphics.Point;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 
@@ -18,7 +21,7 @@ public abstract class OnSwipeListener implements View.OnTouchListener {
         INCONSISTENT;
     }
 
-    private MotionEvent mPrevious;
+    private Point mPrevious;
     private int mTouchSlop;
     private Direction mDirection;
 
@@ -33,7 +36,7 @@ public abstract class OnSwipeListener implements View.OnTouchListener {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mPrevious = event;
+                mPrevious = new Point((int)event.getRawX(), (int)event.getRawY());
                 mDirection = Direction.NONE;
 
                 break;
@@ -58,7 +61,7 @@ public abstract class OnSwipeListener implements View.OnTouchListener {
                     if (direction != Direction.NONE) mDirection = direction;
                 } else if (mDirection == Direction.INCONSISTENT) {
                     /* no op */
-                } else if (mDirection != direction) {
+                } else if (mDirection != direction && direction != Direction.NONE) {
                     mDirection = Direction.INCONSISTENT;
                 }
 
@@ -86,23 +89,23 @@ public abstract class OnSwipeListener implements View.OnTouchListener {
         return false;
     }
 
-    private boolean isRight(MotionEvent e1, MotionEvent e2) {
-        float delta = e1.getX() - e2.getX();
-        return Math.abs(delta) > mTouchSlop && delta > 0;
-    }
-
-    private boolean isLeft(MotionEvent e1, MotionEvent e2) {
-        float delta = e1.getX() - e2.getX();
+    private boolean isRight(Point e1, MotionEvent e2) {
+        float delta = e1.x - e2.getRawX();
         return Math.abs(delta) > mTouchSlop && delta < 0;
     }
 
-    private boolean isUp(MotionEvent e1, MotionEvent e2) {
-        float delta = e1.getY() - e2.getY();
+    private boolean isLeft(Point e1, MotionEvent e2) {
+        float delta = e1.x - e2.getRawX();
         return Math.abs(delta) > mTouchSlop && delta > 0;
     }
 
-    private boolean isDown(MotionEvent e1, MotionEvent e2) {
-        float delta = e1.getY() - e2.getY();
+    private boolean isUp(Point e1, MotionEvent e2) {
+        float delta = e1.y - e2.getRawY();
+        return Math.abs(delta) > mTouchSlop && delta > 0;
+    }
+
+    private boolean isDown(Point e1, MotionEvent e2) {
+        float delta = e1.y - e2.getRawY();
         return Math.abs(delta) > mTouchSlop && delta < 0;
     }
 

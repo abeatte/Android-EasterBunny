@@ -59,7 +59,7 @@ public class EasterBunny {
     private List<UnlockGesture> mCombination;
     private int mCombinationStep;
     MotionEvent mPreviousTouch;
-    private FrameLayout mOverlay;
+    private View mOverlay;
 
     private EasterBunny(Activity activity) {
         mActivity = activity;
@@ -68,19 +68,32 @@ public class EasterBunny {
     }
 
     private void deployOverlay() {
-        Window w = mActivity.getWindow();
-        mOverlay = new FrameLayout(mActivity);
-        mOverlay.setId(R.id.easterbunny_overlay);
+        mOverlay = mActivity.getLayoutInflater().inflate(R.layout.easterbunny_overlay, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
-        w.addContentView(mOverlay, params);
+
+        View controller = mOverlay.findViewById(R.id.easterbunny_controller);
+        controller.findViewById(R.id.controller_b).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processGesture(UnlockGesture.BUTTON_B);
+            }
+        });
+        controller.findViewById(R.id.controller_a).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processGesture(UnlockGesture.BUTTON_A);
+            }
+        });
+
+        mActivity.getWindowManager().addView(mOverlay, params);
     }
 
     private void removeOverlay() {
-        ((ViewGroup)mOverlay.getParent()).removeView(mOverlay);
+        if (mOverlay.getParent() instanceof ViewGroup) ((ViewGroup)mOverlay.getParent()).removeView(mOverlay);
     }
 
     /**
@@ -147,27 +160,11 @@ public class EasterBunny {
     }
 
     private void hideController() {
-        mOverlay.removeView(mOverlay.findViewById(R.id.easterbunny_controller));
+        mOverlay.findViewById(R.id.easterbunny_controller).setVisibility(View.GONE);
     }
 
     private void showController(boolean withDPad) {
-        View controller = mActivity.getLayoutInflater().inflate(R.layout.easterbunny_controller, null);
-        controller.findViewById(R.id.controller_b).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                processGesture(UnlockGesture.BUTTON_B);
-            }
-        });
-        controller.findViewById(R.id.controller_a).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                processGesture(UnlockGesture.BUTTON_A);
-            }
-        });
-        controller.setId(R.id.easterbunny_controller);
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION);
-        params.gravity = Gravity.CENTER;
-        mOverlay.addView(controller, params);
+        mOverlay.findViewById(R.id.easterbunny_controller).setVisibility(View.VISIBLE);
     }
 
     private void unlock() {

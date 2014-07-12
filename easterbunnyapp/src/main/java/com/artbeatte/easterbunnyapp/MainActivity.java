@@ -63,6 +63,7 @@ public class MainActivity extends Activity {
             EasterBunny easterBunny = EasterBunny.Create(getActivity())
                     .clearCombination()
                     .addStep(UnlockGesture.SWIPE_UP)
+                    .addStep(UnlockGesture.BUTTON_B)
                     .addStep(UnlockGesture.SWIPE_UP)
                     .addStep(UnlockGesture.SWIPE_DOWN)
                     .addStep(UnlockGesture.SWIPE_DOWN)
