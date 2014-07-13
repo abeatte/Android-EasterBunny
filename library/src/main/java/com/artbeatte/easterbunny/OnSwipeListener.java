@@ -27,7 +27,7 @@ public abstract class OnSwipeListener implements View.OnTouchListener {
 
     public OnSwipeListener(View view) {
         ViewConfiguration vc = ViewConfiguration.get(view.getContext());
-        mTouchSlop = vc.getScaledTouchSlop();
+        mTouchSlop = vc.getScaledTouchSlop() * 5;
     }
 
     @Override
