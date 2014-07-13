@@ -3,7 +3,9 @@
 
     <!-- reds -->
     <color name="eb_nes_red">#DD2817</color>
+    <color name="eb_nes_red_dark">#FF712017</color>
     <color name="eb_nes_red_pressed">#C41915</color>
+    <color name="eb_nes_red_pressed_dark">#FF591915</color>
 
     <!-- grays -->
     <color name="eb_nes_background_light">#DDD6C8</color>
