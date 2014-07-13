@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="oval" >
+            <solid android:color="@color/eb_nes_red_pressed_dark" />
+            <padding android:top="2dp"
+                android:left="2dp"
+                android:bottom="2dp"
+                android:right="2dp" />
+        </shape>
+    </item>
+
+    <!-- shadow -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#40000000" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/eb_nes_red_pressed" />
+        </shape>
+    </item>
+
+</layer-list>

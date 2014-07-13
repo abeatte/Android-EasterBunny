@@ -1,30 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/easterbunny_controller"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@android:color/darker_gray"
-    android:layout_gravity="center"
     android:layout_centerInParent="true"
-    android:padding="8dp" >
+    android:background="@drawable/nes_background"
+    android:layout_gravity="center"
+    android:padding="8dp">
 
-    <Button
-        android:id="@+id/controller_b"
+    <RelativeLayout
+        android:id="@+id/easterbunny_controller"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_purple"
-        android:layout_margin="8dp"
-        android:text="@string/controller_button_b"/>
+        android:layout_gravity="center"
+        android:background="@drawable/nes_button_pack_background"
+        android:paddingTop="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="2dp">
 
-    <Button
-        android:id="@+id/controller_a"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/controller_b"
-        android:background="@android:color/holo_purple"
-        android:layout_margin="8dp"
-        android:text="@string/controller_button_a"/>
 
-</RelativeLayout>
+        <FrameLayout
+            android:id="@+id/controller_b_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/nes_button_background"
+            android:layout_marginRight="8dp"
+            android:padding="4dp">
+
+            <Button
+                style="@style/Widget.EasterBunny.Nes.Button"
+                android:id="@+id/controller_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/controller_b_container"
+            android:layout_alignRight="@id/controller_b_container"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:textStyle="bold"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:text="@string/controller_button_b"
+            android:textColor="@color/eb_nes_red"/>
+
+        <FrameLayout
+            android:id="@+id/controller_a_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/nes_button_background"
+            android:layout_toRightOf="@id/controller_b_container"
+            android:padding="4dp" >
+
+            <Button
+                style="@style/Widget.EasterBunny.Nes.Button"
+                android:id="@+id/controller_a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/controller_a_container"
+            android:layout_alignRight="@id/controller_a_container"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:textStyle="bold"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:text="@string/controller_button_a"
+            android:textColor="@color/eb_nes_red"/>
+
+    </RelativeLayout>
+</FrameLayout>
+

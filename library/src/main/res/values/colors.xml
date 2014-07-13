@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- reds -->
+    <color name="eb_nes_red">#DD2817</color>
+    <color name="eb_nes_red_dark">#FF712017</color>
+    <color name="eb_nes_red_pressed">#C41915</color>
+    <color name="eb_nes_red_pressed_dark">#FF591915</color>
+
+    <!-- grays -->
+    <color name="eb_nes_background_light">#DDD6C8</color>
+    <color name="eb_nes_background_border">#575452</color>
+    <color name="eb_nes_background_dark">#282828</color>
+
+</resources>

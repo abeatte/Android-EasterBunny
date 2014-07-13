@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="oval" >
+            <solid android:color="@color/eb_nes_red_dark" />
+            <padding android:right="3dp" android:bottom="5dp" />
+        </shape>
+    </item>
+    <!-- background to color -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/eb_nes_red" />
+        </shape>
+    </item>
+
+    <!-- shadow -->
+    <item>
+        <shape android:shape="oval">
+            <corners android:radius="2dp" />
+            <solid android:color="#10000000" />
+        </shape>
+    </item>
+
+    <!-- eewww fill again. overdraw. -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/eb_nes_red" />
+        </shape>
+    </item>
+
+</layer-list>

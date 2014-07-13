@@ -1,5 +1,7 @@
 <resources>
+
     <string name="app_name">EasterBunny</string>
     <string name="controller_button_b">B</string>
     <string name="controller_button_a">A</string>
+
 </resources>
