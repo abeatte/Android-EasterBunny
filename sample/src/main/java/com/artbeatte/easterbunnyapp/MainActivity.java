@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.artbeatte.easterbunny.EasterBunny;
@@ -23,7 +24,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new MainFragment())
                     .commit();
         }
     }
@@ -49,64 +50,86 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * A placeholder fragment containing a simple view.
+     * Shows how to use custom and pattern lock combinations with EasterBunny.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class MainFragment extends Fragment {
 
         private EasterBunny mEasterBunny;
+        private EasterBunny.UnlockListener mUnlockListener;
+        private TextView mHint;
 
-        public PlaceholderFragment() {
+        public MainFragment() {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            rootView.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+
+            mHint = (TextView) rootView.findViewById(R.id.hint);
+            mHint.setText(getString(R.string.combination) + " " + getString(R.string.combo_not_set));
+
+            rootView.findViewById(R.id.custom_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), android.R.string.ok, Toast.LENGTH_LONG).show();
+                    deployCustomEasterBunny();
+                }
+            });
+            rootView.findViewById(R.id.pattern_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deployPatternEasterBunny();
                 }
             });
 
             return rootView;
         }
 
+        private void deployCustomEasterBunny() {
+            mEasterBunny = new EasterBunny(getActivity())
+                    .clearCombination()
+                    .addStep(UnlockGesture.SWIPE_UP)
+                    .addStep(UnlockGesture.SWIPE_DOWN)
+                    .addStep(UnlockGesture.BUTTON_A)
+                    .addStep(UnlockGesture.SWIPE_RIGHT)
+                    .lock();
+
+            mEasterBunny.setUnlockListener(mUnlockListener);
+
+            mHint.setText(getString(R.string.combination) + " " + getString(R.string.custom_instructions));
+        }
+
+        private void deployPatternEasterBunny() {
+            mEasterBunny = new EasterBunny(getActivity())
+                    .setPattern(UnlockPattern.KONAMI_CODE)
+                    .lock();
+
+            mEasterBunny.setUnlockListener(mUnlockListener);
+
+            mHint.setText(getString(R.string.combination) + " " + getString(R.string.konami_instructions));
+        }
+
         @Override
         public void onStart() {
             super.onStart();
 
-            mEasterBunny = new EasterBunny(getActivity())
-                    .clearCombination()
-                    .addStep(UnlockGesture.SWIPE_UP)
-                    .addStep(UnlockGesture.BUTTON_B)
-                    .addStep(UnlockGesture.SWIPE_UP)
-                    .addStep(UnlockGesture.BUTTON_B)
-                    .addStep(UnlockGesture.BUTTON_B)
-                    .addStep(UnlockGesture.SWIPE_RIGHT)
-                    .addStep(UnlockGesture.SWIPE_DOWN)
-                    .addStep(UnlockGesture.BUTTON_A)
-                    .lock();
-
-//            EasterBunny.Create(getActivity()).setPattern(UnlockPattern.KONAMI_CODE);
-
-            mEasterBunny.setUnlockListener(new EasterBunny.UnlockListener() {
+            mUnlockListener = new EasterBunny.UnlockListener() {
                 @Override
                 public void unlock() {
-                    Toast.makeText(getActivity(), "EasterEgg Unlocked!!!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.unlocked), Toast.LENGTH_LONG).show();
                 }
 
                 @Override
                 public void unlockFailed() {
+                    Toast.makeText(getActivity(), getString(R.string.try_again), Toast.LENGTH_SHORT).show();
                     // TODO: keep count and provide hint every 5 fails.
                 }
-            });
+            };
         }
 
         @Override
         public void onStop() {
             super.onStop();
-            mEasterBunny.stop();
+            if (mEasterBunny != null) mEasterBunny.stop();
         }
     }
 }

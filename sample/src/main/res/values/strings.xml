@@ -4,5 +4,13 @@
     <string name="app_name">EasterBunnyApp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="button_custom_lock">CustomLock</string>
+    <string name="button_pattern_lock">PatternLock</string>
+    <string name="combination">Combination:</string>
+    <string name="combo_not_set">not set.</string>
+    <string name="custom_instructions">UP, DOWN, A, RIGHT.</string>
+    <string name="konami_instructions">THE KONAMI CODE\nUP, UP, DOWN, DOWN, LEFT, RIGHT, LEFT, RIGHT, B, A.</string>
+    <string name="try_again">Try Again</string>
+    <string name="unlocked">EasterEgg Unlocked!</string>
 
 </resources>

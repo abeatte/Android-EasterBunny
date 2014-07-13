@@ -134,8 +134,7 @@ public class EasterBunny {
                         .addStep(UnlockGesture.SWIPE_LEFT)
                         .addStep(UnlockGesture.SWIPE_RIGHT)
                         .addStep(UnlockGesture.BUTTON_B)
-                        .addStep(UnlockGesture.BUTTON_A)
-                        .lock();
+                        .addStep(UnlockGesture.BUTTON_A);
                 break;
             default:
 
@@ -144,6 +143,9 @@ public class EasterBunny {
         return this;
     }
 
+    /**
+     * Disables the {@link com.artbeatte.easterbunny.EasterBunny}
+     */
     public void stop() {
         mDecorView.setOnTouchListener(null);
         removeController();
@@ -163,7 +165,7 @@ public class EasterBunny {
         if (mUnlockListener != null) mUnlockListener.unlock();
     }
 
-    public void unlockFailed() {
+    private void unlockFailed() {
         mCombinationStep = 0;
         if (isButtonGesture(mCombination.get(mCombinationStep))) addController(false);
         else removeController();
