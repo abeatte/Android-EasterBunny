@@ -2,3 +2,27 @@ EasterBunny
 ===========
 
 A Library for laying Easter Eggs
+
+Simply add this into your code:
+
+    mEasterBunny = new EasterBunny(getActivity())
+                    .clearCombination()
+                    .addStep(UnlockGesture.SWIPE_UP)
+                    .addStep(UnlockGesture.SWIPE_DOWN)
+                    .addStep(UnlockGesture.BUTTON_A)
+                    .addStep(UnlockGesture.SWIPE_RIGHT)
+                    .lock();
+    mEasterBunny.setUnlockListener(new EasterBunny.UnlockListener() {
+                @Override
+                public void unlock() {
+                    Toast.makeText(getActivity(), getString(R.string.unlocked), Toast.LENGTH_LONG).show();
+                }
+                @Override
+                public void unlockFailed() {
+                    Toast.makeText(getActivity(), getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+                    // TODO: keep count and provide hint every 5 fails.
+                }
+            };);
+
+<img src="https://github.com/abeatte/Android-EasterBunny/nes_controller.png" height="200" />
+
