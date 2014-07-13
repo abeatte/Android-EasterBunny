@@ -24,5 +24,5 @@ Simply add this into your code:
                 }
             };);
 
-<img src="https://github.com/abeatte/Android-EasterBunny/nes_controller.png" height="200" />
+<img src="https://github.com/abeatte/Android-EasterBunny/raw/master/nes_controller.png" height="800" />
 
