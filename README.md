@@ -3,7 +3,9 @@ EasterBunny
 
 <img src="https://github.com/abeatte/Android-EasterBunny/raw/master/Icon.png" height="200" />
 
-A Library for laying Easter Eggs
+A Library for laying Easter Eggs.
+
+Try out the <a href="https://play.google.com/store/apps/details?id=com.artbeatte.easterbunnyapp">sample</a> in the Play Store.
 
 Simply add this into your code:
 
