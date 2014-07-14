@@ -1,6 +1,8 @@
 EasterBunny
 ===========
 
+<img src="https://github.com/abeatte/Android-EasterBunny/raw/master/Icon.png" height="200" />
+
 A Library for laying Easter Eggs
 
 Simply add this into your code:
