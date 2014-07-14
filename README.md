@@ -1,5 +1,7 @@
+<!-- 
 EasterBunny
-===========
+=========== 
+-->
 
 <img src="https://github.com/abeatte/Android-EasterBunny/raw/master/Icon.png" height="200" />
 
