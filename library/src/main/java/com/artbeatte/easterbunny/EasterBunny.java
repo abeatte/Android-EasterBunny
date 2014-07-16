@@ -3,6 +3,7 @@ package com.artbeatte.easterbunny;
 import android.app.Activity;
 import android.graphics.PixelFormat;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -35,7 +36,9 @@ public class EasterBunny {
     private UnlockListener mUnlockListener;
     private List<UnlockGesture> mCombination;
     private int mCombinationStep;
-    private View mDecorView;
+    private FrameLayout mTouchListeningView;
+    private OnSwipeListener mSwipeListener;
+    private boolean mLocked;
 
     /**
      * Creates a {@link com.artbeatte.easterbunny.EasterBunny}.
@@ -45,7 +48,64 @@ public class EasterBunny {
         mActivity = activity;
         mCombination = new ArrayList<UnlockGesture>();
         mCombinationStep = -1;
-        mDecorView = mActivity.getWindow().getDecorView();
+        mTouchListeningView = new FrameLayout(mActivity) {
+            @Override
+            public boolean onInterceptTouchEvent(MotionEvent ev) {
+                if (!isControllersTouch(ev)) {
+                    mSwipeListener.onTouch(null, ev);
+                }
+                return false;
+            }
+
+            private boolean isControllersTouch(MotionEvent motionEvent) {
+                if (!isControllerVisible()) return false;
+
+                int[] startPoint = new int[2];
+                View controller = mActivity.getWindow().getDecorView().findViewById(R.id.easterbunny_controller);
+                controller.getLocationInWindow(startPoint);
+
+                int x1, x2, y1, y2;
+                x1 = startPoint[0];
+                y1 = startPoint[1];
+                x2 = x1 + controller.getWidth();
+                y2 = y1 + controller.getHeight();
+
+                return (motionEvent.getX() > x1 && motionEvent.getX() < x2 &&
+                        motionEvent.getY() > y1 && motionEvent.getY() <y2);
+
+            }
+
+            @Override
+            public boolean onTouchEvent(MotionEvent event) {
+                return false;
+            }
+        };
+        mSwipeListener = new OnSwipeListener(mTouchListeningView) {
+            @Override
+            public void onSwipe(Direction direction) {
+                UnlockGesture unlockGesture = null;
+                switch (direction) {
+                    case LEFT:
+                        unlockGesture = UnlockGesture.SWIPE_LEFT;
+                        break;
+                    case RIGHT:
+                        unlockGesture = UnlockGesture.SWIPE_RIGHT;
+                        break;
+                    case UP:
+                        unlockGesture = UnlockGesture.SWIPE_UP;
+                        break;
+                    case DOWN:
+                        unlockGesture = UnlockGesture.SWIPE_DOWN;
+                        break;
+                    case INCONSISTENT:
+                        if (!mLocked) unlockFailed();
+                }
+
+                if (!mLocked) processGesture(unlockGesture);
+            }
+        };
+        mActivity.getWindow().getDecorView().setOnTouchListener(mSwipeListener);
+        mLocked = false;
     }
 
     /**
@@ -82,10 +142,16 @@ public class EasterBunny {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) controller.getLayoutParams();
         lp.gravity = Gravity.CENTER;
         controller.setLayoutParams(lp);
+        controller.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
     }
 
     private void removeController() {
-        View controller = mDecorView.findViewById(R.id.easterbunny_controller);
+        View controller = mActivity.getWindow().getDecorView().findViewById(R.id.easterbunny_controller);
         if (controller != null) ((ViewGroup)controller.getParent()).removeView(controller);
     }
 
@@ -147,7 +213,7 @@ public class EasterBunny {
      * Disables the {@link com.artbeatte.easterbunny.EasterBunny}
      */
     public void stop() {
-        mDecorView.setOnTouchListener(null);
+        mTouchListeningView.setOnTouchListener(null);
         removeController();
     }
 
@@ -156,13 +222,14 @@ public class EasterBunny {
      * @return true if displayed
      */
     public boolean isControllerVisible() {
-        return mDecorView.findViewById(R.id.easterbunny_controller) != null;
+        return mActivity.getWindow().getDecorView().findViewById(R.id.easterbunny_controller) != null;
     }
 
     private void unlock() {
         mCombinationStep = -1;
         stop();
         if (mUnlockListener != null) mUnlockListener.unlock();
+        mLocked = true;
     }
 
     private void unlockFailed() {
@@ -178,30 +245,15 @@ public class EasterBunny {
      */
     public EasterBunny lock() {
         mCombinationStep = 0;
-        mDecorView.setOnTouchListener(new OnSwipeListener(mDecorView) {
-            @Override
-            public void onSwipe(Direction direction) {
-                UnlockGesture unlockGesture = null;
-                switch (direction) {
-                    case LEFT:
-                        unlockGesture = UnlockGesture.SWIPE_LEFT;
-                        break;
-                    case RIGHT:
-                        unlockGesture = UnlockGesture.SWIPE_RIGHT;
-                        break;
-                    case UP:
-                        unlockGesture = UnlockGesture.SWIPE_UP;
-                        break;
-                    case DOWN:
-                        unlockGesture = UnlockGesture.SWIPE_DOWN;
-                        break;
-                    case INCONSISTENT:
-                        unlockFailed();
-                }
-
-                processGesture(unlockGesture);
-            }
-        });
+        View decorView = mActivity.getWindow().getDecorView();
+        ViewGroup.LayoutParams lp = decorView.getLayoutParams();
+        int childCount = ((ViewGroup)decorView).getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = ((ViewGroup)decorView).getChildAt(i);
+            ((ViewGroup) decorView).removeView(child);
+            mTouchListeningView.addView(child, child.getLayoutParams());
+        }
+        ((ViewGroup) decorView).addView(mTouchListeningView, lp);
         if (isButtonGesture(mCombination.get(mCombinationStep))) addController(false);
         return this;
     }
