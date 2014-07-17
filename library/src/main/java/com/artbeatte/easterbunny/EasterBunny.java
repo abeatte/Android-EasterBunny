@@ -51,28 +51,10 @@ public class EasterBunny {
         mTouchListeningView = new FrameLayout(mActivity) {
             @Override
             public boolean onInterceptTouchEvent(MotionEvent ev) {
-                if (!isControllersTouch(ev)) {
+                if (!isControllerVisible()) {
                     mSwipeListener.onTouch(null, ev);
                 }
                 return false;
-            }
-
-            private boolean isControllersTouch(MotionEvent motionEvent) {
-                if (!isControllerVisible()) return false;
-
-                int[] startPoint = new int[2];
-                View controller = mActivity.getWindow().getDecorView().findViewById(R.id.easterbunny_controller);
-                controller.getLocationInWindow(startPoint);
-
-                int x1, x2, y1, y2;
-                x1 = startPoint[0];
-                y1 = startPoint[1];
-                x2 = x1 + controller.getWidth();
-                y2 = y1 + controller.getHeight();
-
-                return (motionEvent.getX() > x1 && motionEvent.getX() < x2 &&
-                        motionEvent.getY() > y1 && motionEvent.getY() <y2);
-
             }
 
             @Override
