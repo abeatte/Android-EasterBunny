@@ -199,6 +199,17 @@ public class EasterBunny {
      */
     public void stop() {
         mTouchListeningView.setOnTouchListener(null);
+        View decorView = mActivity.getWindow().getDecorView();
+
+        // remove view
+        ((ViewGroup)decorView).removeView(mTouchListeningView);
+        for (int i = 0; i < mTouchListeningView.getChildCount(); i++) {
+            View child = mTouchListeningView.getChildAt(i);
+            mTouchListeningView.removeView(child);
+            ((ViewGroup)decorView).addView(child);
+        }
+
+        decorView.setOnTouchListener(null);
         removeController();
     }
 
