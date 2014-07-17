@@ -79,6 +79,9 @@ public class EasterBunny {
                     case DOWN:
                         unlockGesture = UnlockGesture.SWIPE_DOWN;
                         break;
+                    case NONE:
+                        /* ignore clicks */
+                        break;
                     case INCONSISTENT:
                         if (!mLocked) unlockFailed();
                 }
