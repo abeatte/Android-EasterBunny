@@ -85,6 +85,7 @@ public class MainActivity extends Activity {
         }
 
         private void deployCustomEasterBunny() {
+            removeOldEasterBunny();
             mEasterBunny = new EasterBunny(getActivity())
                     .clearCombination()
                     .addStep(UnlockGesture.SWIPE_UP)
@@ -99,6 +100,7 @@ public class MainActivity extends Activity {
         }
 
         private void deployPatternEasterBunny() {
+            removeOldEasterBunny();
             mEasterBunny = new EasterBunny(getActivity())
                     .setPattern(UnlockPattern.KONAMI_CODE)
                     .lock();
@@ -106,6 +108,10 @@ public class MainActivity extends Activity {
             mEasterBunny.setUnlockListener(mUnlockListener);
 
             mHint.setText(getString(R.string.combination) + " " + getString(R.string.konami_instructions));
+        }
+
+        private void removeOldEasterBunny() {
+            if (mEasterBunny != null) mEasterBunny.stop();
         }
 
         @Override
