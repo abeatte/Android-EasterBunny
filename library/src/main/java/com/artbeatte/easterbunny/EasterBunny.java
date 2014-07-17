@@ -48,48 +48,6 @@ public class EasterBunny {
         mActivity = activity;
         mCombination = new ArrayList<UnlockGesture>();
         mCombinationStep = -1;
-        mTouchListeningView = new FrameLayout(mActivity) {
-            @Override
-            public boolean onInterceptTouchEvent(MotionEvent ev) {
-                if (!isControllerVisible()) {
-                    mSwipeListener.onTouch(null, ev);
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onTouchEvent(MotionEvent event) {
-                return false;
-            }
-        };
-        mSwipeListener = new OnSwipeListener(mTouchListeningView) {
-            @Override
-            public void onSwipe(Direction direction) {
-                UnlockGesture unlockGesture = null;
-                switch (direction) {
-                    case LEFT:
-                        unlockGesture = UnlockGesture.SWIPE_LEFT;
-                        break;
-                    case RIGHT:
-                        unlockGesture = UnlockGesture.SWIPE_RIGHT;
-                        break;
-                    case UP:
-                        unlockGesture = UnlockGesture.SWIPE_UP;
-                        break;
-                    case DOWN:
-                        unlockGesture = UnlockGesture.SWIPE_DOWN;
-                        break;
-                    case NONE:
-                        /* ignore clicks */
-                        break;
-                    case INCONSISTENT:
-                        if (!mLocked) unlockFailed();
-                }
-
-                if (!mLocked) processGesture(unlockGesture);
-            }
-        };
-        mActivity.getWindow().getDecorView().setOnTouchListener(mSwipeListener);
         mLocked = false;
     }
 
@@ -198,6 +156,8 @@ public class EasterBunny {
      * Disables the {@link com.artbeatte.easterbunny.EasterBunny}
      */
     public void stop() {
+        if (mTouchListeningView == null) return;
+
         mTouchListeningView.setOnTouchListener(null);
         View decorView = mActivity.getWindow().getDecorView();
 
@@ -241,7 +201,53 @@ public class EasterBunny {
      */
     public EasterBunny lock() {
         mCombinationStep = 0;
+
         View decorView = mActivity.getWindow().getDecorView();
+
+        // add listeningView
+        mTouchListeningView = new FrameLayout(mActivity) {
+            @Override
+            public boolean onInterceptTouchEvent(MotionEvent ev) {
+                if (!isControllerVisible()) {
+                    mSwipeListener.onTouch(null, ev);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onTouchEvent(MotionEvent event) {
+                return false;
+            }
+        };
+        mSwipeListener = new OnSwipeListener(mTouchListeningView) {
+            @Override
+            public void onSwipe(Direction direction) {
+                UnlockGesture unlockGesture = null;
+                switch (direction) {
+                    case LEFT:
+                        unlockGesture = UnlockGesture.SWIPE_LEFT;
+                        break;
+                    case RIGHT:
+                        unlockGesture = UnlockGesture.SWIPE_RIGHT;
+                        break;
+                    case UP:
+                        unlockGesture = UnlockGesture.SWIPE_UP;
+                        break;
+                    case DOWN:
+                        unlockGesture = UnlockGesture.SWIPE_DOWN;
+                        break;
+                    case NONE:
+                        /* ignore clicks */
+                        break;
+                    case INCONSISTENT:
+                        if (!mLocked) unlockFailed();
+                }
+
+                if (!mLocked) processGesture(unlockGesture);
+            }
+        };
+        decorView.setOnTouchListener(mSwipeListener);
+
         ViewGroup.LayoutParams lp = decorView.getLayoutParams();
         int childCount = ((ViewGroup)decorView).getChildCount();
         for (int i = 0; i < childCount; i++) {
