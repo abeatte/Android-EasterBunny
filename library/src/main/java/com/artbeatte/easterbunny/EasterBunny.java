@@ -38,7 +38,6 @@ public class EasterBunny {
     private int mCombinationStep;
     private FrameLayout mTouchListeningView;
     private OnSwipeListener mSwipeListener;
-    private boolean mLocked;
 
     /**
      * Creates a {@link com.artbeatte.easterbunny.EasterBunny}.
@@ -48,7 +47,6 @@ public class EasterBunny {
         mActivity = activity;
         mCombination = new ArrayList<UnlockGesture>();
         mCombinationStep = -1;
-        mLocked = false;
     }
 
     /**
@@ -185,7 +183,6 @@ public class EasterBunny {
         mCombinationStep = -1;
         stop();
         if (mUnlockListener != null) mUnlockListener.unlock();
-        mLocked = true;
     }
 
     private void unlockFailed() {
@@ -240,10 +237,10 @@ public class EasterBunny {
                         /* ignore clicks */
                         break;
                     case INCONSISTENT:
-                        if (!mLocked) unlockFailed();
+                        unlockFailed();
                 }
 
-                if (!mLocked) processGesture(unlockGesture);
+                processGesture(unlockGesture);
             }
         };
         decorView.setOnTouchListener(mSwipeListener);
@@ -257,6 +254,7 @@ public class EasterBunny {
         }
         ((ViewGroup) decorView).addView(mTouchListeningView, lp);
         if (isButtonGesture(mCombination.get(mCombinationStep))) addController(false);
+
         return this;
     }
 
