@@ -246,6 +246,7 @@ public class EasterBunny {
         decorView.setOnTouchListener(mSwipeListener);
 
         ViewGroup.LayoutParams lp = decorView.getLayoutParams();
+        if (lp == null) lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         int childCount = ((ViewGroup)decorView).getChildCount();
         for (int i = 0; i < childCount; i++) {
             View child = ((ViewGroup)decorView).getChildAt(i);
