@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "com.artbeatte.easterbunny"
-        minSdkVersion 15
-        targetSdkVersion 15
+        minSdkVersion 8
+        targetSdkVersion 8
         versionCode 1
         versionName "1.0"
     }
