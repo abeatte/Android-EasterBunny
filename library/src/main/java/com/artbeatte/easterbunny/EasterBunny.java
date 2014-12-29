@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * Created by art.beatte on 7/10/14.
+ * *
  */
 public class EasterBunny {
 
@@ -238,7 +239,8 @@ public class EasterBunny {
                         /* ignore clicks */
                         break;
                     case INCONSISTENT:
-                        unlockFailed();
+                        unlockGesture = UnlockGesture.INCONSISTENT;
+                        break;
                 }
 
                 processGesture(unlockGesture);
@@ -252,7 +254,7 @@ public class EasterBunny {
         for (int i = 0; i < childCount; i++) {
             View child = ((ViewGroup)decorView).getChildAt(i);
             ((ViewGroup) decorView).removeView(child);
-            child = cleanScrollViews(child);
+            child = injectListeningScrollViews(child);
             mTouchListeningView.addView(child, child.getLayoutParams());
         }
         ((ViewGroup) decorView).addView(mTouchListeningView, lp);
@@ -261,7 +263,7 @@ public class EasterBunny {
         return this;
     }
     
-    private View cleanScrollViews(View view) {
+    private View injectListeningScrollViews(View view) {
         if (view instanceof ViewGroup) {
             ViewGroup.LayoutParams lp = view.getLayoutParams();
             if (lp == null) lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -286,7 +288,7 @@ public class EasterBunny {
                     parent.removeViewAt(index);
                     parent.addView(sv, index, lp);
                 } else {
-                    cleanScrollViews(child);
+                    injectListeningScrollViews(child);
                 }
             }
         }
@@ -294,7 +296,7 @@ public class EasterBunny {
     }
 
     private void processGesture(UnlockGesture unlockGesture) {
-        if (unlockGesture == null) return;
+        if (unlockGesture == null || mCombinationStep == -1) return;
 
         if (isButtonGesture(unlockGesture)) removeController();
 
