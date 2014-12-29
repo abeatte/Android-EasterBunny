@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ScrollView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by art.beatte on 7/10/14.
+ * *
  */
 public class EasterBunny {
 
@@ -237,7 +239,8 @@ public class EasterBunny {
                         /* ignore clicks */
                         break;
                     case INCONSISTENT:
-                        unlockFailed();
+                        unlockGesture = UnlockGesture.INCONSISTENT;
+                        break;
                 }
 
                 processGesture(unlockGesture);
@@ -251,6 +254,7 @@ public class EasterBunny {
         for (int i = 0; i < childCount; i++) {
             View child = ((ViewGroup)decorView).getChildAt(i);
             ((ViewGroup) decorView).removeView(child);
+            child = injectListeningScrollViews(child);
             mTouchListeningView.addView(child, child.getLayoutParams());
         }
         ((ViewGroup) decorView).addView(mTouchListeningView, lp);
@@ -258,9 +262,41 @@ public class EasterBunny {
 
         return this;
     }
+    
+    private View injectListeningScrollViews(View view) {
+        if (view instanceof ViewGroup) {
+            ViewGroup.LayoutParams lp = view.getLayoutParams();
+            if (lp == null) lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            int childCount = ((ViewGroup)view).getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View child = ((ViewGroup)view).getChildAt(i);
+                if (child instanceof ScrollView) {
+                    ScrollView sv = new ScrollView(view.getContext()) {
+                        @Override
+                        public boolean onTouchEvent(MotionEvent ev) {
+                            mTouchListeningView.onInterceptTouchEvent(ev);
+                            return super.onTouchEvent(ev);
+                        }
+                    };
+                    for (int j = 0; j < ((ViewGroup)child).getChildCount(); j++) {
+                        View childsChild = ((ViewGroup)child).getChildAt(j);
+                        ((ViewGroup)child).removeViewAt(j);
+                        sv.addView(childsChild, childsChild.getLayoutParams());
+                    }
+                    ViewGroup parent = (ViewGroup) child.getParent();
+                    int index = parent.indexOfChild(child);
+                    parent.removeViewAt(index);
+                    parent.addView(sv, index, lp);
+                } else {
+                    injectListeningScrollViews(child);
+                }
+            }
+        }
+        return view;
+    }
 
     private void processGesture(UnlockGesture unlockGesture) {
-        if (unlockGesture == null) return;
+        if (unlockGesture == null || mCombinationStep == -1) return;
 
         if (isButtonGesture(unlockGesture)) removeController();
 
