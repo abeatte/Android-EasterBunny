@@ -41,6 +41,10 @@ public abstract class OnSwipeListener implements View.OnTouchListener {
 
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (mPrevious == null) {
+                    // this is the second ACTION_UP. We don't need it
+                    break;
+                }
                 right = isRight(mPrevious, event);
                 left = isLeft(mPrevious, event);
                 up = isUp(mPrevious, event);
